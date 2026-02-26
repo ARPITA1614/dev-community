@@ -30,6 +30,7 @@
            <%= render 'shared/header' %>        
         </div>
          <%= yield %>
+        <%= turbo_frame_tag "remote_modal" %>   <%# it will create new ele in dom with name turbo-frame or custom ele name it as turbo frame and assisgns it id=> remote modal %>
          <div class="col-lg-10 mx-auto">
            <%= render 'shared/footer' %>
       </div>
