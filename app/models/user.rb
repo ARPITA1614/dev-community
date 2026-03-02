@@ -2,7 +2,8 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :trackable, :confirmable
+         :recoverable, :rememberable, :validatable, :trackable, :confirmable,
+         authentication_keys: [ :login ] # for authentication with username or email
 
  has_many :work_experiences, dependent: :destroy
  has_many :connections, dependent: :destroy
@@ -10,6 +11,22 @@ class User < ApplicationRecord
  validates :first_name, :last_name, :profile_title, presence: true
  validates :username, presence: true, uniqueness: true
 
+  attr_writer :login # for login with username or email
+
+  # for login with username or email
+  def login
+    @login || username || email
+  end
+
+  # for login with username or email
+  def self.find_for_database_authentication(warden_conditions)
+    conditions = warden_conditions.dup
+    if (login = conditions.delete(:login))
+      where(conditions.to_h).where([ "lower(username) = :value OR lower(email) = :value", { value: login.downcase } ]).first
+    elsif conditions.has_key?(:username) || conditions.has_key?(:email)
+      where(conditions.to_h).first
+    end
+  end
 
   PROFILE_TITLE=[
     "senior Ruby on Rails Developer",
@@ -31,7 +48,7 @@ class User < ApplicationRecord
  end
 
 def self.ransackable_attributes(auth_object = nil)
-    ["country", "city" ]
+    [ "country", "city" ]
 end
 
 def self.ransackable_associations(auth_object = nil)
@@ -41,8 +58,8 @@ end
 def check_if_already_connected?(current_user, user)
     # self != user && !my_connection(user).present?
     current_user != user && !current_user.connections.pluck(:connected_user_id).include?(user.id)
-    # !current_user.connections => current user k saare connections load krega 
-    # chcek with connected user id if connected user id is present user already connected then dont show link to connect
+    # !current_user.connections => current user k saare connections load krega
+    # check with connected user id if connected user id is present user already connected then dont show link to connect
 end
 
 def mutually_connected_ids(user)
