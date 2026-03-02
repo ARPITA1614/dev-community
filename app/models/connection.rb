@@ -1,0 +1,22 @@
+class Connection < ApplicationRecord
+  CONNECTION_STATUS = %w[pending accepted rejected deleted]
+  belongs_to :user
+  # add association for fetching all requested connection for user connected_user_id as foreign key
+  belongs_to :requested, foreign_key: :connected_user_id, class_name: "User"
+  belongs_to :received, foreign_key: :user_id, class_name: "User"
+  # this assosciation will give requested and recieves connection for current user
+
+  validates :connected_user_id, presence: true
+  validates :status, presence: true, inclusion: { in: CONNECTION_STATUS }
+
+    def status_btn
+    case status
+    when "accepted"
+      "btn btn-success"
+    when "rejected"
+      "btn btn-danger"
+    else
+      "btn btn-primary"
+    end
+    end
+end

@@ -1,0 +1,128 @@
+<div class="col-lg-10 mx-auto mt-5">
+  <% if @requested_connections.present? %>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Requested connections</h3>
+      </div>
+
+      <div class="card-body text-center">
+        <div class="row"> <%# to display in grid %>
+
+          <% @requested_connections.each do |connection| %>
+            <div class="col-lg-3">
+              <div class="card mt-3">
+                <div class="card-body">
+
+                  <%= image_tag 'dummy.jpeg', class: "img-fluid mb-1" %> <%#  mb-1 => space btw text and img %>
+
+                  <div style="min-height: 100px;">
+
+                  <%= link_to member_path(connection.requested), class: "text-decoration-none text-primary", target: "_blank" do %>
+
+                    <p class="lead fw-bold">
+                      <%#= get_the_receiver(connection.connected_user_id).name %>
+                       <%= connection.requested.name %>
+                    </p>
+
+                  <% end %>
+
+                  <small class="text-muted">
+                    <%#= get_the_receiver(connection.connected_user_id).profile_title %>
+                     <%= connection.requested.profile_title %>
+                  </small>
+                  <br>
+
+                  </div>
+
+                  <div class="d-grid"> <%# user to display button is block format %>
+                    <%= link_to connection.status.titleize,
+                        "javascript:void(0)",
+                        class: "#{connection.status_btn} mt-2" %>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+
+  <% if @received_connections.present? %>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Received connections</h3>
+      </div>
+
+      <div class="card-body text-center">
+        <div class="row">
+
+          <% @received_connections.each do |connection| %>
+            <div class="col-lg-3">
+              <div class="card mt-3">
+                <div class="card-body">
+
+                  <%= image_tag 'dummy.jpeg', class: "img-fluid mb-1" %>
+
+                  <div style="min-height: 100px">
+
+                 <%= link_to member_path(connection.received), class: "text-decoration-none text-primary", target: "_blank" do %>
+
+                    <p class="lead fw-bold">
+                      <%#= get_the_requestor(connection.user_id).name %>
+                      <%= connection.received.name %>
+                    </p>
+                    <%# get_the_requestor(connection.user_id).name => in logs many queries are running solve=> eager loading %>
+
+                  <% end %>
+
+                  <small class="text-muted">
+                    <%= connection.received.profile_title %>
+                    <%#= get_the_requestor(connection.user_id).profile_title %>
+                  </small>
+                  <br>
+
+                  </div>
+
+                  <div id="connection-status-<%= connection.id %>">  <%# dynamic id becz after accept/reject we use controller to replace dom element%>
+
+                  <%# if connection.status == "accepted" %>
+                  <% if ["accepted","rejected"].include?(connection.status) %>
+                    <div class="d-grid">
+                      <%#= link_to connection.status.titleize,
+                          "javascript:void(0)",
+                          class: "btn btn-primary mt-2" %>
+                      <%= link_to connection.status.titleize,
+                          "javascript:void(0)",
+                          class: "#{connection.status_btn} mt-2" %>
+                    </div>
+                  <% else %>
+
+                    <%#= link_to "Accept",
+                        "javascript:void(0)",
+                        class: "btn btn-success mt-2" %>
+
+                    <%#= link_to "Reject",
+                        "javascript:void(0)",
+                        class: "btn btn-danger mt-2" %>
+
+                    <%= link_to "Accept", connection_path(connection), class: "btn btn-primary btn-success mt-2", data: { controller: "update-connection-status", turbo_method: :patch } %>
+
+                    <%= link_to "Reject", connection_path(connection), class: "btn btn-primary btn-danger mt-2", data: { controller: "update-connection-status", turbo_method: :patch } %>
+                  <% end %>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,36 +1,61 @@
 <div class="col-lg-10 mx-auto mt-5">
-    <div class="card mb-5">
+  <%= render 'member_personal_details', user: @user %>
+  <div class="card mb-5">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="d-flex justify-content-start">
+            <h3>About</h3>
+          </div>
+        </div>
+        <% if @user == current_user %>
+          <div class="col-lg-6">
+            <div class="d-flex justify-content-end">
+              <%= link_to edit_member_description_path, class: "edit-about", data: { controller: "bs-modal-form" } do %>
+                <i class="fa-solid fa-pencil"></i>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <%= render 'member_description', user: @user %>
+    </div>
+  </div>
+  <div class="card mb-5">
+    <div class="card-body">
+      <% if @user == current_user %>
         <div class="row">
+          <div class="col-lg-4">
+            <div class="d-flex justify-content-start">
+              <h3>Work Experiences</h3>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="d-flex justify-content-end">
+              <%= link_to new_work_experience_path, class: "add-work-experience", data: { controller: 'bs-modal-form' } do %>
+                <i class="fas fa-plus"></i> Add Experience
+              <% end %>
+            </div>
+          </div>
+          <% if @user.work_experiences.present? %>
             <div class="col-lg-4">
-                <%= image_tag "dummy.jpeg", class: "img-fluid" %>
+              <div class="d-flex justify-content-end">
+                <%= link_to 'javascript:void(0)' do %>
+                  <i class="fas fa-pencil"></i> Edit Experiences
+                <% end %>
+              </div>
             </div>
-            <div class="col-lg-8">
-                <div class="card-body">
-                    <h3 class="fw-fold"><%= @user.name%></h3>
-                    <p class="lead"><%= @user.profile_title %></p>
-                    <p class="lead text-primary"><%= @user.address %></p>
-                </div>
-            </div>
+          <% end %>
         </div>
+      <% end %>
+
+      <% if @user.work_experiences.present? %>
+        <ul class="list-group" id="work_experience_items">
+          <% @user.work_experiences.each do |work_experience| %>
+            <%= render 'work_experiences/work_experience', work_experience: work_experience %>
+          <% end %>
+        </ul>
+      <% end %>
     </div>
-    <div class="card mb-5">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="d-flex justify-content-start">
-                    <h3>About</h3>
-                     </div>
-                </div>
-            </div>
-             <div class="col-lg-6">
-                    <div class="d-flex justify-content-start">
-                        <%= link_to edit_member_description_path(@user), data: {controller: "edit-user-description"} do %>
-                        <i class="bi bi-pencil-fill"></i>
-                        <% end %>
-                    </div>
-                    </div>
-                    </div>
-            <p class="lead"><%= @user.about %></p>
-        </div>
-    </div>
+  </div>
 </div>

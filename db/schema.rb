@@ -10,13 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_29_060826) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_01_181600) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "connections", force: :cascade do |t|
+    t.integer "connected_user_id"
+    t.datetime "created_at", null: false
+    t.string "status"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_connections_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.text "about"
     t.string "city"
+    t.integer "connected_user_ids", default: [], array: true
     t.string "contact_number"
     t.string "country"
     t.datetime "created_at", null: false
@@ -42,4 +52,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_29_060826) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  create_table "work_experiences", force: :cascade do |t|
+    t.string "company"
+    t.datetime "created_at", null: false
+    t.boolean "currently_working_here"
+    t.text "description"
+    t.string "employment_type"
+    t.date "end_date"
+    t.string "job_title"
+    t.string "location"
+    t.string "location_type"
+    t.date "start_date"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_work_experiences_on_user_id"
+  end
+
+  add_foreign_key "connections", "users"
+  add_foreign_key "work_experiences", "users"
 end

@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 // import { Modal } from "bootstrap" 
-
+// used this controller when wehvae to show anything in bootstrap maodal
 // Connects to data-controller="bs-modal"
 export default class extends Controller {
   connect() {
